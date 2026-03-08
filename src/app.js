@@ -1,12 +1,18 @@
 import express from 'express';
 import morgan from 'morgan';
-import usersRoutes from './routes/users.route.js'
+import usersRoutes from './routes/users.route.js';
+import authRoutes from './routes/auth.route.js';
+
 const app = express();
 
-// Middlewares
+app.use(express.json());
 app.use(morgan('combined'));
 
-// Routes
-app.use('/', usersRoutes)
+app.get('/', (req, res) => {
+  res.send('API diplomado funcionando');
+});
+
+app.use('/api/users', usersRoutes);
+app.use('/api/login', authRoutes);
 
 export default app;

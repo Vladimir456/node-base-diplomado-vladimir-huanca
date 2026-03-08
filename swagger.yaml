@@ -1,0 +1,52 @@
+openapi: 3.0.0
+info:
+  title: Diplomado API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+
+paths:
+
+  /api/login:
+    post:
+      summary: Login de usuario
+      responses:
+        '200':
+          description: Login correcto
+
+  /api/users:
+    get:
+      summary: Listar usuarios
+      responses:
+        '200':
+          description: Lista de usuarios
+
+    post:
+      summary: Crear usuario
+      responses:
+        '201':
+          description: Usuario creado
+
+  /api/users/{id}:
+    get:
+      summary: Obtener usuario por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+
+  /api/users/list/pagination:
+    get:
+      summary: Listar usuarios con paginación
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
