@@ -5,48 +5,231 @@ info:
 
 servers:
   - url: http://localhost:3000
+  - url: https://vladimir-huanca-diplomado.onrender.com
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 
 paths:
-
   /api/login:
     post:
       summary: Login de usuario
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: user1
+                password:
+                  type: string
+                  example: "123456"
       responses:
         '200':
           description: Login correcto
+        '401':
+          description: Credenciales incorrectas
 
   /api/users:
     get:
       summary: Listar usuarios
+      tags:
+        - Users
       responses:
         '200':
           description: Lista de usuarios
 
     post:
       summary: Crear usuario
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: vladimir
+                password:
+                  type: string
+                  example: "123456"
       responses:
         '201':
           description: Usuario creado
+        '400':
+          description: Datos inválidos
+
+  /api/users/list/pagination:
+    get:
+      summary: Listar usuarios con paginación
+      tags:
+        - Users
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            example: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            example: 5
+        - name: search
+          in: query
+          schema:
+            type: string
+            example: user
+        - name: orderBy
+          in: query
+          schema:
+            type: string
+            enum: [id, username, status]
+            example: username
+        - name: orderDir
+          in: query
+          schema:
+            type: string
+            enum: [ASC, DESC]
+            example: ASC
+      responses:
+        '200':
+          description: Lista paginada de usuarios
+        '400':
+          description: Parámetros inválidos
 
   /api/users/{id}:
     get:
       summary: Obtener usuario por ID
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: integer
+            example: 1
+      responses:
+        '200':
+          description: Usuario encontrado
+        '401':
+          description: Token requerido o inválido
+        '404':
+          description: Usuario no encontrado
 
-  /api/users/list/pagination:
-    get:
-      summary: Listar usuarios con paginación
+    put:
+      summary: Actualizar usuario
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
       parameters:
-        - name: page
-          in: query
+        - name: id
+          in: path
+          required: true
           schema:
             type: integer
-        - name: limit
-          in: query
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: user1edit
+                password:
+                  type: string
+                  example: "654321"
+      responses:
+        '200':
+          description: Usuario actualizado correctamente
+        '400':
+          description: Datos inválidos
+        '401':
+          description: Token requerido o inválido
+        '404':
+          description: Usuario no encontrado
+
+    patch:
+      summary: Actualizar estado del usuario
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
           schema:
             type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [active, inactive]
+                  example: inactive
+      responses:
+        '200':
+          description: Estado actualizado correctamente
+        '400':
+          description: Status inválido
+        '401':
+          description: Token requerido o inválido
+        '404':
+          description: Usuario no encontrado
+
+    delete:
+      summary: Eliminar usuario
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Usuario eliminado correctamente
+        '401':
+          description: Token requerido o inválido
+        '404':
+          description: Usuario no encontrado
