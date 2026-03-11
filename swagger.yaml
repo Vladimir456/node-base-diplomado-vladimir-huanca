@@ -233,3 +233,141 @@ paths:
           description: Token requerido o inválido
         '404':
           description: Usuario no encontrado
+
+  /api/tasks:
+    get:
+      summary: Listar tareas
+      tags:
+        - Tasks
+      responses:
+        '200':
+          description: Lista de tareas
+
+    post:
+      summary: Crear tarea
+      tags:
+        - Tasks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - user_id
+              properties:
+                name:
+                  type: string
+                  example: Mi primera tarea
+                user_id:
+                  type: integer
+                  example: 1
+      responses:
+        '201':
+          description: Tarea creada
+
+  /api/tasks/{id}:
+    get:
+      summary: Obtener tarea por ID
+      tags:
+        - Tasks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Tarea encontrada
+        '404':
+          description: Tarea no encontrada
+
+    put:
+      summary: Actualizar tarea
+      tags:
+        - Tasks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  example: Tarea editada
+      responses:
+        '200':
+          description: Tarea actualizada
+
+    patch:
+      summary: Actualizar estado de tarea
+      tags:
+        - Tasks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - done
+              properties:
+                done:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: Estado actualizado
+
+    delete:
+      summary: Eliminar tarea
+      tags:
+        - Tasks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Tarea eliminada
+
+  /api/users/{id}/tasks:
+    get:
+      summary: Listar tareas por usuario
+      tags:
+        - Tasks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Lista de tareas del usuario
+        '404':
+          description: Usuario no encontrado

@@ -254,6 +254,34 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const getUserTasks = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const userExists = await pool.query(
+      'SELECT id FROM users WHERE id = $1',
+      [id]
+    );
+
+    if (userExists.rows.length === 0) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    const result = await pool.query(
+      'SELECT id, name, done, user_id FROM tasks WHERE user_id = $1 ORDER BY id DESC',
+      [id]
+    );
+
+    return res.json({
+      total: result.rows.length,
+      data: result.rows
+    });
+  } catch (error) {
+    console.error('Error al listar tareas del usuario:', error);
+    return res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
 export default {
   getUsers,
   getUsersPagination,
@@ -261,5 +289,6 @@ export default {
   findUser,
   updateUser,
   patchUserStatus,
-  deleteUser
+  deleteUser,
+  getUserTasks
 };
